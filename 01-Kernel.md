@@ -1,3 +1,5 @@
+# Kernel
+
 We'll start with the kernel, it's the core of the phone and sooner or later, you'll need to modify it. Right now, just Huawei/Honor distributes Kirin SoCs, so you'll find it at their webpage. On some devices, for whatever reason, the source is just released at the chinese version of their webpage, so try with that if you aren't lucky.
 
 Now that you have the kernel, it's time to test it, Huawei/Honor builds their kernels with the Arm64 toolchain found at Google's git server, it can also be found inside the 'prebuilts/gcc' folder if you downloaded the AOSP/CM source, some kernels have instructions inside because sometimes Huawei/Honor release more than one defconfig with a similar name, so reading them will help.
