@@ -1,6 +1,6 @@
 #Graphics
 
-The graphics system is going to be tough to implement, since prety much every component is proprietary.
+The graphics system is going to be tough to implement, since pretty much every component is proprietary.
 
 ##Overview
 
