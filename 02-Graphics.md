@@ -1,12 +1,27 @@
-# Graphics
+#Graphics
 
-The first system that you'll want to have working in your custom rom is the Graphics one. Most (if not all) Kirin SoCs have an ARM Mali GPU, ARM provides open source kernel drivers (Use the fbdev one), but the userspace driver is proprietary and you'll have to extract it from your stock rom. Userspace and Kernel drivers are paired, so you can't update the kernel driver without updating the userspace driver. The userspace driver can be found either inside '/system/lib64/egl/' or '/vendor/lib64/egl' and it's called most of the times libGLES_mali.so However, this is not the only library you'll have to copy to see that sweet boot animation.
+The graphics system is going to be tough to implement, since prety much every component is proprietary.
 
-Huawei worked on their own memory allocation implementation. It's commonly located at '/system/lib64/gralloc.(ro.product.model).so' and usually it takes advantage of the functions that Huawei/Honor implemented in 'libion.so', so you might have to copy it as well.
+##Overview
 
-Right now, the graphics system may work for your device, but if you analyze a logcat from your device, you'll discover that you can implement what We call the "Hardware Composer", this module offloads the graphic system, so adding it will surely be benefitial, it's located at '/system/lib64/hwcomposer.(ro.product.model).so'
+Kirin SoCs graphic system is powered by a Mali GPU, (owned by ARM) and it takes advantage of Open GL (some support OpenCL, depends on the GPU)
 
-In conclusion, the graphics system is based on a kernel driver, a userspace driver (libGLES_mali.so), the memory allocation module (gralloc) and the hardware composer (hwcomposer). It isn't possible to write one guide for every Kirin platform, so should you have any problem, check the GPU specs, maybe you're missing an OpenCL module, logcat will help you there.
+## Structure
 
+Everything starts at the Surfaceflinger binary, that calls Android's GL implementation, also called libEGL. libEGL will take care of everything,it determines if there's a GPU and will look for the drivers.
 
-PS: As you may have realized, when I make reference to a library, I do it with lib64 instead of lib, I do it because surfaceflinger calls the 64 bit level libraries `readelf -h bin/surfaceflinger`, but for example mediaserver calls the 32 bit libraries (audioflinger for example), make sure to adjust it to your device.
+If you take a look at libEGL's source, you'll find a file called Loader.cpp, it will look for your drivers at `/{system|vendor}/lib64/egl`and it's usually called libGLES_mali.so. It will communicate with the kernel mldule and talk to your GPU. Everything looks fine so far!
+
+##Userspace patching
+
+However chances are it isn't, let's go step by step: The first library loaded, libEGL, probably contains some proprietary code by Huawei. You'll figure it out if you use the libEGL present in EMUI, because it will request additional libraries. But don't start by replacing it.
+
+Surfaceflinger will also look for a couple of modules called Gralloc and HwComposer. It's mandatory to include Gralloc since it's the responsible of managing memory for the graphics system, however you can leave out HwComposer.
+
+But why would you do that? Because these modules are proprietary, and Huawei's HwComposer implementation might not be compatible with every rom.
+
+##Conclusion
+
+The graphic system is so complicated and private that it's hard to write a generic guide. You'll have to fight against proprietary libraries and missing dependencies.
+
+I wish you luck!
