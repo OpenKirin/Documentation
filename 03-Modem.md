@@ -13,7 +13,7 @@ There are 4 parts involved:
 
 First of all, the modem is one of those things that tends to be left out of the kernel source releases, so make sure that it's not missing, it's usually located at ´drivers/hisi/modem_hixxxx´.
 
-Once that We now that the modem source is present, and that it works (test it while you are on EMUI).
+Once that We know that the modem source is present, and that it works (test it while you are on EMUI).
 
 ## Userspace libraries
 
